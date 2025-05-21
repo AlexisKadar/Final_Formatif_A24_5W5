@@ -57,7 +57,7 @@ export class AppComponent {
 
   currentQuestion: MathQuestion | null = null;
 
-  constructor(public account: AccountService, private zone: NgZone) {}
+  constructor(public account: AccountService, private zone: NgZone) { }
 
   selectChoice(choice: number) {
     this.selection = choice;
@@ -120,6 +120,19 @@ export class AppComponent {
         if (this.currentQuestion) {
           this.currentQuestion.playerChoices[choiceIndex]++;
         }
+      });
+    });
+
+    this.hubConnection.on('GoodAnswer', () => {
+      this.zone.run(() => {
+        this.nbRightAnswers++;
+        alert("Bonne réponse !");
+      });
+    });
+
+    this.hubConnection.on('WrongAnswer', (goodAnswerIndex: number) => {
+      this.zone.run(() => {
+        alert("Mauvaise réponse ! La bonne réponse était " + this.currentQuestion?.answers[goodAnswerIndex]);
       });
     });
 
